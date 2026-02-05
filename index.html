@@ -3,138 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FM 26 | REAL DATABASE</title>
+    <title>FM 26 | LASSIRI ELITE EDITION</title>
     <style>
-        :root { --neon-blue: #00d2ff; --neon-purple: #9d50bb; --gold: #f1c40f; --danger: #ff4757; }
-        body { margin: 0; background: #050a10 url('https://files.catbox.moe/k3h57w.png') no-repeat center center fixed; background-size: cover; color: white; font-family: 'Segoe UI', sans-serif; }
-        .header { position: fixed; top: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.95); display: flex; justify-content: space-around; align-items: center; border-bottom: 2px solid var(--neon-blue); z-index: 1000; }
-        .content { padding: 90px 10px 120px; min-height: 100vh; }
-        .card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); }
-        .btn { background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(0,0,0,0.98); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; z-index: 1000; }
-        .tab-btn { color: #888; font-size: 10px; text-align: center; flex:1; cursor: pointer; }
-        .active-tab { color: var(--neon-blue); font-weight: bold; }
-        .player-info { display: flex; justify-content: space-between; align-items: center; }
-        .rating { color: var(--gold); font-weight: bold; font-size: 1.2em; }
-        .pos { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+        :root { --gold: #f1c40f; --dark: #0a0e14; --field: #1e3d2b; --danger: #ff4757; --blue: #3498db; --success: #2ecc71; }
+        body { margin: 0; background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        
+        /* Header Stats */
+        .header { background: #161b22; padding: 10px; display: flex; justify-content: space-around; border-bottom: 2px solid var(--gold); position: fixed; width: 100%; z-index: 1000; box-sizing: border-box; font-size: 12px; }
+        .stat-val { color: var(--gold); font-weight: bold; }
+
+        /* Container */
+        .container { padding: 80px 15px 100px; min-height: 100vh; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #333; position: relative; }
+        
+        /* Player Cards */
+        .player-card { border-right: 4px solid var(--blue); display: flex; justify-content: space-between; align-items: center; }
+        .age-badge { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+        .award-gold { background: linear-gradient(45deg, #d4af37, #f1c40f); color: black; font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-top: 5px; display: inline-block; }
+
+        /* Match Screen */
+        #match-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--field); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .scoreboard { background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; border: 2px solid white; width: 85%; }
+        
+        /* Buttons & Nav */
+        .btn { background: var(--gold); border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; height: 70px; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding: 12px; font-size: 10px; cursor: pointer; color: #888; }
+        .active { color: var(--gold); }
+        
+        .market-tag { font-size: 10px; padding: 2px 5px; border-radius: 4px; float: left; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div>💰 <span id="money" style="color:var(--gold)">500</span>M</div>
-    <div>🏢 الإدارة: <span id="trust">100</span>%</div>
+<audio id="snd-goal" src="https://assets.mixkit.co/active_storage/sfx/2043/2043-preview.mp3"></audio>
+
+<div id="match-screen">
+    <div class="scoreboard">
+        <h2 id="m-timer">00'</h2>
+        <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div><h3>LASSIRI</h3><h1 id="m-score-me">0</h1></div>
+            <div>VS</div>
+            <div><h3 id="m-opp-name">خصم</h3><h1 id="m-score-opp">0</h1></div>
+        </div>
+        <div id="m-log" style="font-size:12px; color:#ddd; margin-top:10px; height:60px; overflow:hidden;"></div>
+    </div>
 </div>
 
-<div class="content" id="main-ui"></div>
+<div class="header">
+    <div>💰 <span id="h-money" class="stat-val">50</span>M</div>
+    <div>📅 <span id="h-date" class="stat-val">2026</span></div>
+    <div>🏆 <span id="h-trophies" class="stat-val">0</span></div>
+    <div>جولة: <span id="h-round" class="stat-val">1</span>/38</div>
+</div>
 
-<nav class="nav-bar">
-    <div class="tab-btn" onclick="showTab('office')">🏠<br>المكتب</div>
-    <div class="tab-btn" onclick="showTab('market')">🛒<br>سوق النجوم</div>
-    <div class="tab-btn" onclick="showTab('squad')">🏃<br>فريقي</div>
+<div class="container" id="main-ui"></div>
+
+<nav class="nav">
+    <div class="nav-item active" onclick="show('office')">🏠<br>المكتب</div>
+    <div class="nav-item" onclick="show('market')">🛒<br>الميركاتو</div>
+    <div class="nav-item" onclick="show('squad')">🏃‍♂️<br>الفريق</div>
+    <div class="nav-item" onclick="show('cabinet')">🏆<br>الجوائز</div>
 </nav>
 
 <script>
-    // قاعدة بيانات اللاعبين الحقيقيين (عينة ضخمة)
-    const realPlayers = [
-        {name: "كيليان مبابي", pwr: 93, pos: "FWD", price: 200},
-        {name: "إيرلينج هالاند", pwr: 92, pos: "FWD", price: 190},
-        {name: "جود بيلينجهام", pwr: 90, pos: "MID", price: 150},
-        {name: "فينيسيوس جونيور", pwr: 91, pos: "FWD", price: 160},
-        {name: "كيفين دي بروين", pwr: 91, pos: "MID", price: 110},
-        {name: "محمد صلاح", pwr: 89, pos: "FWD", price: 100},
-        {name: "فيرجيل فان دايك", pwr: 89, pos: "DEF", price: 90},
-        {name: "تيبو كورتوا", pwr: 90, pos: "GK", price: 85},
-        {name: "ليونيل ميسي", pwr: 88, pos: "FWD", price: 60},
-        {name: "كريستيانو رونالدو", pwr: 86, pos: "FWD", price: 40},
-        {name: "أشرف حكيمي", pwr: 87, pos: "DEF", price: 75},
-        {name: "ياسين بونو", pwr: 85, pos: "GK", price: 45},
-        {name: "رودري", pwr: 91, pos: "MID", price: 130},
-        {name: "هاري كين", pwr: 90, pos: "FWD", price: 120},
-        {name: "جمال موسيالا", pwr: 88, pos: "MID", price: 110},
-        {name: "فيكتور أوسيمين", pwr: 88, pos: "FWD", price: 105},
-        {name: "روبن دياز", pwr: 89, pos: "DEF", price: 95},
-        {name: "فرينكي دي يونج", pwr: 87, pos: "MID", price: 80}
-    ];
-
+    // بيانات اللعبة الأساسية
     let game = {
-        money: 500, trust: 100,
-        squad: [],
-        availableMarket: []
+        money: 60.0, round: 1, points: 0, year: 2026, day: 1, month: 8, trophies: 0,
+        formation: "4-3-3",
+        history: [],
+        squad: [
+            {name: "محمد صلاح", age: 32, ovr: 89, goals: 0, awards: 0, status: "ok"},
+            {name: "لامين يامال", age: 17, ovr: 85, goals: 0, awards: 0, status: "ok"},
+            {name: "أشرف حكيمي", age: 25, ovr: 87, goals: 0, awards: 0, status: "ok"}
+        ],
+        market: [
+            {name: "إيرلينج هالاند", age: 24, ovr: 91, price: 150},
+            {name: "جود بيلينجهام", age: 21, ovr: 90, price: 130},
+            {name: "أردا غولر", age: 19, ovr: 83, price: 30},
+            {name: "ياسين بونو", age: 33, ovr: 85, price: 25}
+        ],
+        opponents: ["مان سيتي", "ريال مدريد", "ليفربول", "برشلونة", "بايرن", "أرسنال", "إنتر", "باريس"]
     };
 
-    function save() { localStorage.setItem('Lassiri_RealDB_Save', JSON.stringify(game)); }
-    function load() { 
-        let d = localStorage.getItem('Lassiri_RealDB_Save'); 
-        if(d) game = JSON.parse(d);
-        if(game.availableMarket.length === 0) refreshMarket();
-        showTab('office');
+    const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+
+    function isMarketOpen() {
+        return (game.round >= 1 && game.round <= 5) || (game.round >= 19 && game.round <= 23);
     }
 
-    function refreshMarket() {
-        // نختار 6 لاعبين عشوائيين من القائمة الكبيرة لعرضهم في السوق
-        game.availableMarket = [...realPlayers].sort(() => 0.5 - Math.random()).slice(0, 6);
-    }
-
-    function showTab(tab) {
-        document.getElementById('money').innerText = game.money;
-        document.getElementById('trust').innerText = game.trust;
-        let ui = document.getElementById('main-ui');
-
+    function show(tab) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        updateHeader();
+        const ui = document.getElementById('main-ui');
+        
         if(tab === 'office') {
             ui.innerHTML = `
                 <div class="card">
-                    <h3>مكتب المدير LASSIRI 💼</h3>
-                    <p>أنت الآن تدير أشهر نجوم العالم.</p>
-                    <button class="btn" onclick="playMatch()">لعب جولة الدوري ⚽</button>
-                    <button class="btn" style="margin-top:10px; background:var(--gold); color:black;" onclick="refreshMarket(); showTab('market');">تحديث قائمة الانتقالات 🔄</button>
-                </div>`;
-        } else if(tab === 'market') {
-            let html = `<h3>نجوم متاحون للتفاوض 🛒</h3>`;
-            game.availableMarket.forEach((p, i) => {
-                html += `<div class="card">
-                    <div class="player-info">
-                        <div><span class="pos">${p.pos}</span> <b>${p.name}</b></div>
-                        <div class="rating">${p.pwr}</div>
-                    </div>
-                    <button class="btn" style="width:auto; margin-top:10px;" onclick="buyPlayer(${i})">تقديم عرض ${p.price}M</button>
-                </div>`;
-            });
-            ui.innerHTML = html;
-        } else if(tab === 'squad') {
-            let html = `<h3>تشكيلتك الحالية 🏃</h3>`;
-            game.squad.forEach(p => {
-                html += `<div class="card player-info">
-                    <div><span class="pos">${p.pos}</span> <b>${p.name}</b></div>
-                    <div class="rating">${p.pwr}</div>
-                </div>`;
-            });
-            ui.innerHTML = html || "<p>فريقك فارغ! اذهب لتعزيز صفوفك من السوق.</p>";
-        }
-    }
-
-    function buyPlayer(i) {
-        let p = game.availableMarket[i];
-        if(game.money >= p.price) {
-            game.money -= p.price;
-            game.squad.push(p);
-            game.availableMarket.splice(i, 1);
-            alert(`مبروك! ${p.name} وقع رسمياً لنادي LASSIRI.`);
-            save(); showTab('market');
-        } else {
-            alert("الميزانية لا تكفي لشراء هذا النجم!");
-        }
-    }
-
-    function playMatch() {
-        if(game.squad.length < 5) { alert("تحتاج 5 لاعبين على الأقل للعب!"); return; }
-        let win = Math.random() > 0.4;
-        if(win) { game.money += 40; alert("فوز ساحق! مكافأة المباراة 40M"); }
-        else { game.trust -= 5; alert("خسارة.. الجماهير تطالب بالصفقات!"); }
-        save(); showTab('office');
-    }
-
-    window.onload = load;
-</script>
-</body>
-</html>
+                    <h3>المواجهة القادمة 🏟️</h3>
+                    <p>الخصم: <b>${game.opponents[Math.floor(Math.random()*game.opponents.length)]}</b></p>
+                    <button class="btn" onclick="startMatch()">دخول المباراة ⚽</button
