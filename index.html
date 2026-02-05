@@ -3,102 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FM 2026 PRO | BY LASSIRI</title>
+    <title>FM 26 | REAL DATABASE</title>
     <style>
-        :root { --main-blue: #00d2ff; --neon-purple: #9d50bb; --dark-bg: #050a10; }
-        body { 
-            margin: 0; background: var(--dark-bg); 
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://files.catbox.moe/k3h57w.png');
-            background-size: cover; background-position: center; background-attachment: fixed;
-            color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; 
-        }
-        .signature-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; font-weight: 900; color: rgba(255, 255, 255, 0.05); z-index: -1; letter-spacing: 10px; pointer-events: none; }
-        .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-around; align-items: center; border-bottom: 2px solid var(--main-blue); z-index: 999; backdrop-filter: blur(10px); }
-        .content { padding: 80px 15px 100px; height: 100vh; overflow-y: auto; }
-        .card { background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); text-align: center; }
-        .btn { background: linear-gradient(45deg, var(--main-blue), var(--neon-purple)); border: none; color: white; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(10, 10, 10, 0.95); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .stat-box { font-size: 18px; font-weight: bold; color: var(--main-blue); }
+        :root { --neon-blue: #00d2ff; --neon-purple: #9d50bb; --gold: #f1c40f; --danger: #ff4757; }
+        body { margin: 0; background: #050a10 url('https://files.catbox.moe/k3h57w.png') no-repeat center center fixed; background-size: cover; color: white; font-family: 'Segoe UI', sans-serif; }
+        .header { position: fixed; top: 0; width: 100%; height: 70px; background: rgba(0,0,0,0.95); display: flex; justify-content: space-around; align-items: center; border-bottom: 2px solid var(--neon-blue); z-index: 1000; }
+        .content { padding: 90px 10px 120px; min-height: 100vh; }
+        .card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(15px); }
+        .btn { background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 75px; background: rgba(0,0,0,0.98); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; z-index: 1000; }
+        .tab-btn { color: #888; font-size: 10px; text-align: center; flex:1; cursor: pointer; }
+        .active-tab { color: var(--neon-blue); font-weight: bold; }
+        .player-info { display: flex; justify-content: space-between; align-items: center; }
+        .rating { color: var(--gold); font-weight: bold; font-size: 1.2em; }
+        .pos { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
     </style>
 </head>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="FM 26 BY LASSIRI">
-<link rel="apple-touch-icon" href="https://files.catbox.moe/k3h57w.png">
-
 <body>
 
-<div class="signature-bg">LASSIRI</div>
-
 <div class="header">
-    <div>💰 <span id="money" class="stat-box">100</span>M</div>
-    <div>🏟️ لفل: <span id="lvl" class="stat-box">1</span></div>
+    <div>💰 <span id="money" style="color:var(--gold)">500</span>M</div>
+    <div>🏢 الإدارة: <span id="trust">100</span>%</div>
 </div>
 
-<div class="content">
-    <div class="card">
-        <h2>مرحباً كوتش LASSIRI 🏟️</h2>
-        <p>المباراة القادمة ضد: <b>ريال مدريد</b></p>
-        <button class="btn" onclick="playMatch()">لعب المباراة ⚽</button>
-    </div>
-    <div class="card" style="background: rgba(241, 196, 15, 0.1);">
-        <h3>تطوير النادي 🏗️</h3>
-        <button class="btn" style="background: #f1c40f; color: black;" onclick="upgrade()">تطوير المنشآت (70M)</button>
-    </div>
-</div>
+<div class="content" id="main-ui"></div>
 
 <nav class="nav-bar">
-    <div style="color: var(--main-blue); font-weight: bold;">🏠 المكتب</div>
-    <div onclick="alert('سوق الانتقالات سيفتح قريباً!')">🛒 الانتقالات</div>
+    <div class="tab-btn" onclick="showTab('office')">🏠<br>المكتب</div>
+    <div class="tab-btn" onclick="showTab('market')">🛒<br>سوق النجوم</div>
+    <div class="tab-btn" onclick="showTab('squad')">🏃<br>فريقي</div>
 </nav>
 
 <script>
-    let game = { money: 100, lvl: 1 };
-    function save() { localStorage.setItem('Lassiri_FM_Data', JSON.stringify(game)); }
+    // قاعدة بيانات اللاعبين الحقيقيين (عينة ضخمة)
+    const realPlayers = [
+        {name: "كيليان مبابي", pwr: 93, pos: "FWD", price: 200},
+        {name: "إيرلينج هالاند", pwr: 92, pos: "FWD", price: 190},
+        {name: "جود بيلينجهام", pwr: 90, pos: "MID", price: 150},
+        {name: "فينيسيوس جونيور", pwr: 91, pos: "FWD", price: 160},
+        {name: "كيفين دي بروين", pwr: 91, pos: "MID", price: 110},
+        {name: "محمد صلاح", pwr: 89, pos: "FWD", price: 100},
+        {name: "فيرجيل فان دايك", pwr: 89, pos: "DEF", price: 90},
+        {name: "تيبو كورتوا", pwr: 90, pos: "GK", price: 85},
+        {name: "ليونيل ميسي", pwr: 88, pos: "FWD", price: 60},
+        {name: "كريستيانو رونالدو", pwr: 86, pos: "FWD", price: 40},
+        {name: "أشرف حكيمي", pwr: 87, pos: "DEF", price: 75},
+        {name: "ياسين بونو", pwr: 85, pos: "GK", price: 45},
+        {name: "رودري", pwr: 91, pos: "MID", price: 130},
+        {name: "هاري كين", pwr: 90, pos: "FWD", price: 120},
+        {name: "جمال موسيالا", pwr: 88, pos: "MID", price: 110},
+        {name: "فيكتور أوسيمين", pwr: 88, pos: "FWD", price: 105},
+        {name: "روبن دياز", pwr: 89, pos: "DEF", price: 95},
+        {name: "فرينكي دي يونج", pwr: 87, pos: "MID", price: 80}
+    ];
+
+    let game = {
+        money: 500, trust: 100,
+        squad: [],
+        availableMarket: []
+    };
+
+    function save() { localStorage.setItem('Lassiri_RealDB_Save', JSON.stringify(game)); }
     function load() { 
-        let d = localStorage.getItem('Lassiri_FM_Data'); 
+        let d = localStorage.getItem('Lassiri_RealDB_Save'); 
         if(d) game = JSON.parse(d);
-        updateUI();
+        if(game.availableMarket.length === 0) refreshMarket();
+        showTab('office');
     }
-    function updateUI() {
+
+    function refreshMarket() {
+        // نختار 6 لاعبين عشوائيين من القائمة الكبيرة لعرضهم في السوق
+        game.availableMarket = [...realPlayers].sort(() => 0.5 - Math.random()).slice(0, 6);
+    }
+
+    function showTab(tab) {
         document.getElementById('money').innerText = game.money;
-        document.getElementById('lvl').innerText = game.lvl;
+        document.getElementById('trust').innerText = game.trust;
+        let ui = document.getElementById('main-ui');
+
+        if(tab === 'office') {
+            ui.innerHTML = `
+                <div class="card">
+                    <h3>مكتب المدير LASSIRI 💼</h3>
+                    <p>أنت الآن تدير أشهر نجوم العالم.</p>
+                    <button class="btn" onclick="playMatch()">لعب جولة الدوري ⚽</button>
+                    <button class="btn" style="margin-top:10px; background:var(--gold); color:black;" onclick="refreshMarket(); showTab('market');">تحديث قائمة الانتقالات 🔄</button>
+                </div>`;
+        } else if(tab === 'market') {
+            let html = `<h3>نجوم متاحون للتفاوض 🛒</h3>`;
+            game.availableMarket.forEach((p, i) => {
+                html += `<div class="card">
+                    <div class="player-info">
+                        <div><span class="pos">${p.pos}</span> <b>${p.name}</b></div>
+                        <div class="rating">${p.pwr}</div>
+                    </div>
+                    <button class="btn" style="width:auto; margin-top:10px;" onclick="buyPlayer(${i})">تقديم عرض ${p.price}M</button>
+                </div>`;
+            });
+            ui.innerHTML = html;
+        } else if(tab === 'squad') {
+            let html = `<h3>تشكيلتك الحالية 🏃</h3>`;
+            game.squad.forEach(p => {
+                html += `<div class="card player-info">
+                    <div><span class="pos">${p.pos}</span> <b>${p.name}</b></div>
+                    <div class="rating">${p.pwr}</div>
+                </div>`;
+            });
+            ui.innerHTML = html || "<p>فريقك فارغ! اذهب لتعزيز صفوفك من السوق.</p>";
+        }
     }
+
+    function buyPlayer(i) {
+        let p = game.availableMarket[i];
+        if(game.money >= p.price) {
+            game.money -= p.price;
+            game.squad.push(p);
+            game.availableMarket.splice(i, 1);
+            alert(`مبروك! ${p.name} وقع رسمياً لنادي LASSIRI.`);
+            save(); showTab('market');
+        } else {
+            alert("الميزانية لا تكفي لشراء هذا النجم!");
+        }
+    }
+
     function playMatch() {
-        if(Math.random() > 0.4) {
-            let win = 20 * game.lvl; game.money += win;
-            alert("فوز مستحق يا كوتش! + " + win + "M 🏆");
-        } else { alert("خسارة.. حاول مرة أخرى 💔"); }
-        save(); updateUI();
+        if(game.squad.length < 5) { alert("تحتاج 5 لاعبين على الأقل للعب!"); return; }
+        let win = Math.random() > 0.4;
+        if(win) { game.money += 40; alert("فوز ساحق! مكافأة المباراة 40M"); }
+        else { game.trust -= 5; alert("خسارة.. الجماهير تطالب بالصفقات!"); }
+        save(); showTab('office');
     }
-    function upgrade() {
-        if(game.money >= 70) { game.money -= 70; game.lvl++; save(); updateUI(); alert("تم التطوير بنجاح! 🏗️"); }
-        else { alert("الميزانية لا تكفي!"); }
-    }
+
     window.onload = load;
 </script>
 </body>
-<script>
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  // منع المتصفح من إظهار التنبيه الافتراضي فوراً
-  e.preventDefault();
-  deferredPrompt = e;
-  
-  // إظهار رسالة مخصصة للمستخدم (اختياري)
-  setTimeout(() => {
-    if (confirm("كوتش LASSIRI! هل تريد تثبيت اللعبة على شاشة هاتفك لتصل إليها بسرعة؟")) {
-      deferredPrompt.prompt();
-    }
-  }, 3000); // تظهر الرسالة بعد 3 ثوانٍ من فتح الرابط
-});
-
-window.addEventListener('appinstalled', (evt) => {
-  console.log('تم تثبيت FM 2026 بنجاح على الهاتف!');
-});
-</script>
-
 </html>
-
-    
