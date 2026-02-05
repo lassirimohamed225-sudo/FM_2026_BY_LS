@@ -21,6 +21,11 @@
         .stat-box { font-size: 18px; font-weight: bold; color: var(--main-blue); }
     </style>
 </head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="FM 26 BY LASSIRI">
+<link rel="apple-touch-icon" href="https://files.catbox.moe/k3h57w.png">
+
 <body>
 
 <div class="signature-bg">LASSIRI</div>
@@ -73,6 +78,27 @@
     window.onload = load;
 </script>
 </body>
+<script>
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // منع المتصفح من إظهار التنبيه الافتراضي فوراً
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // إظهار رسالة مخصصة للمستخدم (اختياري)
+  setTimeout(() => {
+    if (confirm("كوتش LASSIRI! هل تريد تثبيت اللعبة على شاشة هاتفك لتصل إليها بسرعة؟")) {
+      deferredPrompt.prompt();
+    }
+  }, 3000); // تظهر الرسالة بعد 3 ثوانٍ من فتح الرابط
+});
+
+window.addEventListener('appinstalled', (evt) => {
+  console.log('تم تثبيت FM 2026 بنجاح على الهاتف!');
+});
+</script>
+
 </html>
 
     
