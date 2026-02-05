@@ -3,103 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FM 26 | LASSIRI ELITE EDITION</title>
+    <title>LASSIRI KICK OFF 26 | ULTIMATE</title>
     <style>
-        :root { --gold: #f1c40f; --dark: #0a0e14; --field: #1e3d2b; --danger: #ff4757; --blue: #3498db; --success: #2ecc71; }
-        body { margin: 0; background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        :root { --gold: #f1c40f; --dark: #0a0e14; --field: #1e3d2b; --danger: #ff4757; --blue: #3498db; --win: #2ecc71; }
+        body { margin: 0; background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; user-select: none; }
         
         /* Header Stats */
-        .header { background: #161b22; padding: 10px; display: flex; justify-content: space-around; border-bottom: 2px solid var(--gold); position: fixed; width: 100%; z-index: 1000; box-sizing: border-box; font-size: 12px; }
-        .stat-val { color: var(--gold); font-weight: bold; }
+        .header { background: #161b22; padding: 10px; display: flex; justify-content: space-around; border-bottom: 2px solid var(--gold); position: fixed; width: 100%; z-index: 1000; box-sizing: border-box; font-size: 11px; text-align: center; }
+        .stat-val { color: var(--gold); font-weight: bold; display: block; font-size: 14px; }
 
-        /* Container */
-        .container { padding: 80px 15px 100px; min-height: 100vh; }
+        /* Main Container */
+        .container { padding: 90px 15px 100px; height: 100vh; overflow-y: auto; box-sizing: border-box; }
         .card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #333; position: relative; }
         
-        /* Player Cards */
-        .player-card { border-right: 4px solid var(--blue); display: flex; justify-content: space-between; align-items: center; }
-        .age-badge { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
-        .award-gold { background: linear-gradient(45deg, #d4af37, #f1c40f); color: black; font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: bold; margin-top: 5px; display: inline-block; }
-
-        /* Match Screen */
-        #match-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--field); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .scoreboard { background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; border: 2px solid white; width: 85%; }
+        /* Match Day (Super Kick Off Style) */
+        #match-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--field); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .pitch { width: 90%; height: 60%; border: 2px solid rgba(255,255,255,0.5); border-radius: 10px; position: relative; background: repeating-linear-gradient(90deg, #27ae60, #27ae60 50px, #2ecc71 50px, #2ecc71 100px); }
+        .scoreboard-live { background: rgba(0,0,0,0.9); padding: 20px; border-radius: 15px; width: 85%; margin-bottom: 20px; border: 2px solid white; text-align: center; }
         
-        /* Buttons & Nav */
-        .btn { background: var(--gold); border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; color: black; margin-top: 10px; }
+        /* Navigation */
         .nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; height: 70px; border-top: 1px solid #333; z-index: 1000; }
         .nav-item { flex: 1; text-align: center; padding: 12px; font-size: 10px; cursor: pointer; color: #888; }
         .active { color: var(--gold); }
-        
-        .market-tag { font-size: 10px; padding: 2px 5px; border-radius: 4px; float: left; }
+
+        /* Buttons */
+        .btn { background: var(--gold); border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; color: black; margin-top: 8px; font-size: 13px; }
+        .btn-sim { background: #e67e22; color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Tables */
+        table { width: 100%; font-size: 12px; text-align: center; border-collapse: collapse; }
+        th { color: var(--gold); padding: 8px; border-bottom: 1px solid #444; }
+        td { padding: 8px; border-bottom: 1px solid #222; }
+
+        /* Notifications */
+        .news-bar { background: #5d3fd3; font-size: 10px; padding: 5px; border-radius: 5px; margin-bottom: 10px; color: white; }
+        .injury-badge { background: var(--danger); font-size: 9px; padding: 2px 4px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
 <audio id="snd-goal" src="https://assets.mixkit.co/active_storage/sfx/2043/2043-preview.mp3"></audio>
+<audio id="snd-whistle" src="https://assets.mixkit.co/active_storage/sfx/2051/2051-preview.mp3"></audio>
 
 <div id="match-screen">
-    <div class="scoreboard">
+    <div class="scoreboard-live">
         <h2 id="m-timer">00'</h2>
         <div style="display:flex; justify-content:space-around; align-items:center;">
-            <div><h3>LASSIRI</h3><h1 id="m-score-me">0</h1></div>
-            <div>VS</div>
-            <div><h3 id="m-opp-name">خصم</h3><h1 id="m-score-opp">0</h1></div>
+            <div><h3 id="m-team-a">LASSIRI</h3><h1 id="m-score-a">0</h1></div>
+            <div style="font-weight:bold; font-size:24px;">VS</div>
+            <div><h3 id="m-team-b">الخصم</h3><h1 id="m-score-b">0</h1></div>
         </div>
-        <div id="m-log" style="font-size:12px; color:#ddd; margin-top:10px; height:60px; overflow:hidden;"></div>
+        <div id="m-events" style="font-size:12px; color:var(--gold); margin-top:10px;">بدء المباراة...</div>
     </div>
+    <div class="pitch">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:80px; height:80px; border:2px solid rgba(255,255,255,0.3); border-radius:50%;"></div>
+    </div>
+    <div style="width:85%;"><button class="btn btn-sim" onclick="skipMatch()">تسريع المحاكاة ⏩</button></div>
 </div>
 
 <div class="header">
-    <div>💰 <span id="h-money" class="stat-val">50</span>M</div>
-    <div>📅 <span id="h-date" class="stat-val">2026</span></div>
-    <div>🏆 <span id="h-trophies" class="stat-val">0</span></div>
-    <div>جولة: <span id="h-round" class="stat-val">1</span>/38</div>
+    <div>💰 الميزانية<span id="h-money" class="stat-val">30.0M</span></div>
+    <div>📅 التاريخ<span id="h-date" class="stat-val">أغسطس 2026</span></div>
+    <div>جولة<span id="h-round" class="stat-val">1/38</span></div>
 </div>
 
-<div class="container" id="main-ui"></div>
+<div class="container" id="app"></div>
 
 <nav class="nav">
-    <div class="nav-item active" onclick="show('office')">🏠<br>المكتب</div>
-    <div class="nav-item" onclick="show('market')">🛒<br>الميركاتو</div>
-    <div class="nav-item" onclick="show('squad')">🏃‍♂️<br>الفريق</div>
-    <div class="nav-item" onclick="show('cabinet')">🏆<br>الجوائز</div>
+    <div class="nav-item active" id="nav-office" onclick="show('office')">🏠<br>المكتب</div>
+    <div class="nav-item" id="nav-league" onclick="show('league')">📊<br>الدوري</div>
+    <div class="nav-item" id="nav-squad" onclick="show('squad')">🏃‍♂️<br>الفريق</div>
+    <div class="nav-item" id="nav-market" onclick="show('market')">🛒<br>سوق</div>
 </nav>
 
 <script>
-    // بيانات اللعبة الأساسية
+    // 1. نظام البيانات المتكامل
     let game = {
-        money: 60.0, round: 1, points: 0, year: 2026, day: 1, month: 8, trophies: 0,
+        money: 30.0, debt: 0, round: 1, year: 2026, month: 8, day: 1,
         formation: "4-3-3",
-        history: [],
+        news: "سوق الانتقالات الصيفي مفتوح الآن!",
         squad: [
-            {name: "محمد صلاح", age: 32, ovr: 89, goals: 0, awards: 0, status: "ok"},
-            {name: "لامين يامال", age: 17, ovr: 85, goals: 0, awards: 0, status: "ok"},
-            {name: "أشرف حكيمي", age: 25, ovr: 87, goals: 0, awards: 0, status: "ok"}
+            {name: "Mohamed Salah", age: 33, ovr: 89, injured: 0, price: 60},
+            {name: "Lamine Yamal", age: 18, ovr: 86, injured: 0, price: 95},
+            {name: "Achraf Hakimi", age: 26, ovr: 88, injured: 0, price: 75}
+        ],
+        league: [
+            {name: "LASSIRI FC", pts: 0, g: 0}, {name: "مان سيتي", pts: 0, g: 0}, {name: "ريال مدريد", pts: 0, g: 0},
+            {name: "ليفربول", pts: 0, g: 0}, {name: "أرسنال", pts: 0, g: 0}, {name: "برشلونة", pts: 0, g: 0},
+            {name: "بايرن", pts: 0, g: 0}, {name: "باريس", pts: 0, g: 0}, {name: "ميلان", pts: 0, g: 0}, {name: "يوفنتوس", pts: 0, g: 0}
         ],
         market: [
-            {name: "إيرلينج هالاند", age: 24, ovr: 91, price: 150},
-            {name: "جود بيلينجهام", age: 21, ovr: 90, price: 130},
-            {name: "أردا غولر", age: 19, ovr: 83, price: 30},
-            {name: "ياسين بونو", age: 33, ovr: 85, price: 25}
+            {name: "Erling Haaland", age: 25, ovr: 91, price: 180},
+            {name: "Kylian Mbappe", age: 26, ovr: 92, price: 200},
+            {name: "Gavi", age: 20, ovr: 85, price: 55},
+            {name: "Yassine Bounou", age: 34, ovr: 86, price: 30}
         ],
-        opponents: ["مان سيتي", "ريال مدريد", "ليفربول", "برشلونة", "بايرن", "أرسنال", "إنتر", "باريس"]
+        opponents: ["مان سيتي", "ريال مدريد", "ليفربول", "برشلونة", "بايرن", "باريس", "أرسنال"]
     };
 
     const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
+    // 2. المحرك الأساسي
     function isMarketOpen() {
         return (game.round >= 1 && game.round <= 5) || (game.round >= 19 && game.round <= 23);
     }
 
     function show(tab) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         updateHeader();
-        const ui = document.getElementById('main-ui');
-        
+        const app = document.getElementById('app');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('nav-' + tab).classList.add('active');
+
         if(tab === 'office') {
-            ui.innerHTML = `
+            app.innerHTML = `
+                <div class="news-bar">📰 أخبار: ${game.news}</div>
                 <div class="card">
-                    <h3>المواجهة القادمة 🏟️</h3>
-                    <p>الخصم: <b>${game.opponents[Math.floor(Math.random()*game.opponents.length)]}</b></p>
-                    <button class="btn" onclick="startMatch()">دخول المباراة ⚽</button
+                    <h3>المباراة القادمة 🏟️</h3>
+                    <p>الخصم: <b>${game.opponents[game.round % game.opponents.length]}</b></p>
+                    <button class="btn" onclick="startMatch(false)">لعب المباراة ⚽</button>
+                    <button class="btn btn-sim" onclick="startMatch(true)">محاكاة سريعة ⚡</button>
+                </div>
+                <div class="card">
+                    <h3>أهداف الإدارة 🎯</h3>
+                    <p>المطلوب: إنهاء الموسم في المربع الذهبي.</p>
+                </div>
+                <div class="card">
+                    <h3>البنك 🏦</h3>
+                    <p>الدين: ${game.debt}M</p>
+                    <button class="btn" onclick="takeLoan()" ${game.debt > 0 ? 'disabled' : ''}>طلب قرض 50M</button>
+                </div>`;
+        } else if(tab === 'league') {
+            game.league.sort((a,b) => b.pts - a.pts || b.g - a.g);
+            let html = `<h3>جدول الترتيب 📊</h3><table><tr><th>#</th><th>الفريق</th><th>ن</th></tr>`;
+            game.league.forEach((t, i) => {
+                html += `<tr ${t.name == 'LASSIRI FC' ? 'style="color:var(--gold);font-weight:bold"' : ''}><td>${i+1}</td><td>${t.name}</td><td>${t.pts}</td></tr>`;
+            });
+            app.innerHTML = html + `</table>`;
+        } else if(tab === 'squad') {
+            app.innerHTML = `
+                <div class="card">
+                    <h3>تعديل التكتيك 📋</h3>
+                    <select class="btn" onchange="game.formation = this.value; alert('تم تغيير الخطة إلى ' + this.value)">
+                        <option value="4-3-3" ${game.formation=='4-3-3'?'selected':''}>4-3-3 (هجومي)</option>
+                        <option value="4-4-2" ${game.formation=='4-4-2'?'selected':''}>4-4-2 (متوازن)</option>
+                        <option value="5-3-2" ${game.formation=='5-3-2'?'selected':''}>5-3-2 (دفاعي)</option>
+                    </select>
+                </div>
+                <h3>اللاعبين:</h3>
+                ${game.squad.map((p, i) => `
+                    <div class="card">
+                        <b>${p.name}</b> ⭐${p.ovr} | ${p.age} سنة
+                        ${p.injured > 0 ? `<span class="injury-badge">مصاب لـ ${p.injured} جولة</span>` : ''}
+                        <button class="btn btn-danger" style="padding:5px; font-size:10px;" onclick="sellPlayer(${i})">بيع (${(p.price*0.6).toFixed(1)}M)</button>
+                    </div>
+                `).join('')}`;
+        } else if(tab === 'market') {
+            let open = isMarketOpen();
+            let html = `<h3>الميركاتو ${open ? '✅' : '🔒'}</h3>`;
+            if(!open) html += `<p style="font-size:11px; color:var(--danger)">السوق مغلق حالياً (يفتح صيفاً وشتاءً)</p>`;
+            game.market.forEach((p, i) => {
+                html += `
+                    <div class="card" style="opacity:${open?1:0.5}">
+                        <b>${p.name}</b> (⭐${p.ovr})<br>السعر: ${p.price}M
+                        <button class="btn" onclick="buyPlayer(${i})" ${open?'':'disabled'}>تعاقد</button>
+                    </div>`;
+            });
+            app.innerHTML = html;
+        }
+    }
+
+    // 3. نظام المباريات
+    let matchInterval;
+    function startMatch(isQuick) {
+        if(isQuick) { quickSim(); return; }
+        
+        const screen = document.getElementById('match-screen');
+        screen.style.display = 'flex';
+        document.getElementById('snd-whistle').play();
+        
+        let t = 0; let sA = 0; let sB = 0;
+        document.getElementById('m-team-b').innerText = game.opponents[game.round % game.opponents.length];
+
+        matchInterval = setInterval(() => {
+            t += 2;
+            document.getElementById('m-timer').innerText = t + "'";
+            
+            if(Math.random() < 0.03) {
+                sA++; document.getElementById('m-score-a').innerText = sA;
+                document.getElementById('m-events').innerText = "جـوووووووول لـ LASSIRI! 🔥";
+                document.getElementById('snd-goal').play();
+            } else if(Math.random() < 0.02) {
+                sB++; document.getElementById('m-score-b').innerText = sB;
+                document.getElementById('m-events').innerText = "هدف للمنافس ❌";
+            }
+
+            if(t >= 90) { finishMatch(sA, sB); }
+        }, 150);
+    }
+
+    function skipMatch() { finishMatch(parseInt(document.getElementById('m-score-a').innerText), parseInt(document.getElementById('m-score-b').innerText)); }
+
+    function quickSim() {
+        let sA = Math.floor(Math.random()*3);
+        let sB = Math.floor(Math.random()*2);
+        finishMatch(sA, sB);
+    }
+
+    function finishMatch(sA, sB) {
+        clearInterval(matchInterval);
+        document.getElementById('match-screen').style.display = 'none';
+        
+        let myTeam = game.league.find(t => t.name == "LASSIRI FC");
+        if(sA > sB) { myTeam.pts += 3; game.money += 1.5; alert("فوز ثمين! +1.5M"); }
+        else if(sA == sB) { myTeam.pts += 1; game.money += 0.5; alert("تعادل."); }
+        else { alert("خسارة مؤلمة."); }
+        
+        // محاكاة الدوري والذكاء الاصطناعي للسوق
+        game.league.forEach(t => { if(t.name != "LASSIRI FC" && Math.random() > 0.4) t.pts += 3; });
+        if(isMarketOpen()) game.news = "ريال مدريد يوقع مع لاعب جديد!";
+        
+        // نظام الإصابات
+        if(Math.random() < 0.15) {
+            let p = game.squad[Math.floor(Math.random()*game.squad.length)];
+            p.injured = 3;
+            alert(`🚑 إصابة اللاعب ${p.name} لـ 3 مباريات!`);
+        }
+
+        processCalendar();
+    }
+
+    // 4. نظام الزمن والأعمار
+    function processCalendar() {
+        game.round++;
+        game.day += 7;
+        if(game.day > 28) { game.day = 1; game.month++; }
+        if(game.month > 12) { game.month = 1; game.year++; }
+
+        // نهاية الموسم
+        if(game.round > 38) {
+            alert("نهاية الموسم! حان وقت التطور العمري.");
+            game.squad.forEach(p => {
+                p.age++;
+                if(p.age < 23) p.ovr += 2; else if(p.age > 32) p.ovr -= 2;
+                if(p.age > 38) alert(p.name + " اعتزل اللعب.");
+            });
+            game.round = 1;
+            game.league.forEach(t => t.pts = 0);
+        }
+
+        // سداد القروض
+        if(game.debt > 0) { game.money -= 1.2; game.debt -= 1; if(game.debt < 0) game.debt = 0; }
+        
+        // شفاء اللاعبين
+        game.squad.forEach(p => { if(p.injured > 0) p.injured--; });
+
+        show('office');
+    }
+
+    // 5. الميركاتو والمال
+    function buyPlayer(i) {
+        let p = game.market[i];
+        if(game.money >= p.price) {
+            game.money -= p.price;
+            game.squad.push({...p, injured: 0});
+            game.market.splice(i, 1);
+            show('market');
+        } else alert("المال غير كافٍ!");
+    }
+
+    function sellPlayer(i) {
+        game.money += (game.squad[i].price * 0.6);
+        game.squad.splice(i, 1);
+        show('squad');
+    }
+
+    function takeLoan() {
+        game.money += 50; game.debt = 60; show('office');
+    }
+
+    function updateHeader() {
+        document.getElementById('h-money').innerText = game.money.toFixed(1) + "M";
+        document.getElementById('h-date').innerText = `${months[game.month-1]} ${game.year}`;
+        document.getElementById('h-round').innerText = `${game.round}/38`;
+    }
+
+    window.onload = () => show('office');
+</script>
+</body>
+</html>
