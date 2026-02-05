@@ -1,99 +1,78 @@
-<script>
-    // مصفوفة اللاعبين الافتراضية
-    const defaultPlayers = [
-        { name: "صلاح", pwr: 89 }, { name: "حمزة", pwr: 75 },
-        { name: "أمين", pwr: 80 }, { name: "بدر", pwr: 78 }
-    ];
-
-    let game = {
-        money: 100,
-        lvl: 1,
-        squad: [...defaultPlayers]
-    };
-
-    // دالة الحفظ السحابي المحلي
-    function saveGame() {
-        localStorage.setItem('Lassiri_Pro_Save', JSON.stringify(game));
-        console.log("تم حفظ التقدم بنجاح!");
-    }
-
-    // دالة تحميل البيانات عند فتح التطبيق
-    function loadGame() {
-        const savedData = localStorage.getItem('Lassiri_Pro_Save');
-        if (savedData) {
-            game = JSON.parse(savedData);
-            updateUI();
-        }
-    }
-
-    function updateUI() {
-        document.getElementById('money').innerText = game.money + "M";
-        document.getElementById('lvl').innerText = game.lvl;
-        renderSquad(); // دالة لعرض تشكيلتك الحالية
-    }
-
-    // تشغيل التحميل تلقائياً عند فتح التطبيق
-    window.onload = loadGame;
-</script>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FM 2026 | BY LASSIRI</title>
+    <title>FM 2026 PRO | BY LASSIRI</title>
     <style>
         :root { --main-blue: #00d2ff; --neon-purple: #9d50bb; --dark-bg: #050a10; }
-        
         body { 
-            margin: 0; 
-            background: var(--dark-bg); 
-            /* الخلفية التي صممناها باسمك */
+            margin: 0; background: var(--dark-bg); 
             background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://files.catbox.moe/k3h57w.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; 
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; 
         }
-        
-        .header { 
-            position: fixed; top: 0; width: 100%; height: 60px; 
-            background: rgba(0,0,0,0.8); display: flex; 
-            justify-content: space-around; align-items: center; 
-            border-bottom: 2px solid var(--main-blue); z-index: 999; 
-            backdrop-filter: blur(10px); 
-        }
-
+        .signature-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; font-weight: 900; color: rgba(255, 255, 255, 0.05); z-index: -1; letter-spacing: 10px; pointer-events: none; }
+        .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-around; align-items: center; border-bottom: 2px solid var(--main-blue); z-index: 999; backdrop-filter: blur(10px); }
         .content { padding: 80px 15px 100px; height: 100vh; overflow-y: auto; }
-
-        .card { 
-            background: rgba(255, 255, 255, 0.1); 
-            border-radius: 15px; padding: 20px; 
-            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); 
-            backdrop-filter: blur(10px); text-align: center;
-        }
-
-        .btn { 
-            background: linear-gradient(45deg, var(--main-blue), var(--neon-purple)); 
-            border: none; color: white; padding: 15px; 
-            border-radius: 10px; width: 100%; 
-            font-weight: bold; font-size: 16px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
-        }
-
+        .card { background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); text-align: center; }
+        .btn { background: linear-gradient(45deg, var(--main-blue), var(--neon-purple)); border: none; color: white; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(10, 10, 10, 0.95); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
         .stat-box { font-size: 18px; font-weight: bold; color: var(--main-blue); }
-        
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; height: 70px; 
-            background: rgba(10, 10, 10, 0.9); display: flex; 
-            justify-content: space-around; align-items: center; 
-            border-top: 1px solid #333; 
-        }
     </style>
 </head>
 <body>
 
+<div class="signature-bg">LASSIRI</div>
+
 <div class="header">
     <div>💰 <span id="money" class="stat-box">100</span>M</div>
+    <div>🏟️ لفل: <span id="lvl" class="stat-box">1</span></div>
+</div>
+
+<div class="content">
+    <div class="card">
+        <h2>مرحباً كوتش LASSIRI 🏟️</h2>
+        <p>المباراة القادمة ضد: <b>ريال مدريد</b></p>
+        <button class="btn" onclick="playMatch()">لعب المباراة ⚽</button>
+    </div>
+    <div class="card" style="background: rgba(241, 196, 15, 0.1);">
+        <h3>تطوير النادي 🏗️</h3>
+        <button class="btn" style="background: #f1c40f; color: black;" onclick="upgrade()">تطوير المنشآت (70M)</button>
+    </div>
+</div>
+
+<nav class="nav-bar">
+    <div style="color: var(--main-blue); font-weight: bold;">🏠 المكتب</div>
+    <div onclick="alert('سوق الانتقالات سيفتح قريباً!')">🛒 الانتقالات</div>
+</nav>
+
+<script>
+    let game = { money: 100, lvl: 1 };
+    function save() { localStorage.setItem('Lassiri_FM_Data', JSON.stringify(game)); }
+    function load() { 
+        let d = localStorage.getItem('Lassiri_FM_Data'); 
+        if(d) game = JSON.parse(d);
+        updateUI();
+    }
+    function updateUI() {
+        document.getElementById('money').innerText = game.money;
+        document.getElementById('lvl').innerText = game.lvl;
+    }
+    function playMatch() {
+        if(Math.random() > 0.4) {
+            let win = 20 * game.lvl; game.money += win;
+            alert("فوز مستحق يا كوتش! + " + win + "M 🏆");
+        } else { alert("خسارة.. حاول مرة أخرى 💔"); }
+        save(); updateUI();
+    }
+    function upgrade() {
+        if(game.money >= 70) { game.money -= 70; game.lvl++; save(); updateUI(); alert("تم التطوير بنجاح! 🏗️"); }
+        else { alert("الميزانية لا تكفي!"); }
+    }
+    window.onload = load;
+</script>
+</body>
+</html>
+
     
