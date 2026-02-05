@@ -1,3 +1,40 @@
+<script>
+    // مصفوفة اللاعبين الافتراضية
+    const defaultPlayers = [
+        { name: "صلاح", pwr: 89 }, { name: "حمزة", pwr: 75 },
+        { name: "أمين", pwr: 80 }, { name: "بدر", pwr: 78 }
+    ];
+
+    let game = {
+        money: 100,
+        lvl: 1,
+        squad: [...defaultPlayers]
+    };
+
+    // دالة الحفظ السحابي المحلي
+    function saveGame() {
+        localStorage.setItem('Lassiri_Pro_Save', JSON.stringify(game));
+        console.log("تم حفظ التقدم بنجاح!");
+    }
+
+    // دالة تحميل البيانات عند فتح التطبيق
+    function loadGame() {
+        const savedData = localStorage.getItem('Lassiri_Pro_Save');
+        if (savedData) {
+            game = JSON.parse(savedData);
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('money').innerText = game.money + "M";
+        document.getElementById('lvl').innerText = game.lvl;
+        renderSquad(); // دالة لعرض تشكيلتك الحالية
+    }
+
+    // تشغيل التحميل تلقائياً عند فتح التطبيق
+    window.onload = loadGame;
+</script>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
