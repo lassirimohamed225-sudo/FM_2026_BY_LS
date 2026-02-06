@@ -2,11 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>LASSIRI ULTIMATE 2026 - Mohamed Lassiri</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LASSIRI PRO 2026 - Mohamed Lassiri</title>
     <style>
         :root { --gold: #f1c40f; --dark: #000408; --blue: #1e40af; --light-blue: #60a5fa; --card: #0f172a; --text: #ffffff; --green: #22c55e; --red: #ef4444; }
         body { margin:0; background:var(--dark); color:var(--text); font-family: 'Arial Black', sans-serif; font-weight: 900; overflow:hidden; }
         
+        /* الهيدر المحسن */
         .header { background: var(--blue); padding:10px; border-bottom:5px solid var(--gold); display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center; }
         .stat-item { background: rgba(0,0,0,0.6); padding: 8px; border-radius: 12px; border: 2px solid var(--gold); }
         .stat-item span { font-size:16px; color:#cbd5e1; display:block; }
@@ -21,15 +23,14 @@
 
         .btn { background:var(--blue); color:white; border:3px solid white; padding:18px; border-radius:15px; cursor:pointer; font-weight:bold; width:100%; margin:8px 0; font-size:26px; }
         .btn-gold { background:var(--gold); color:black; border:none; }
-        .btn-red { background:var(--red); color:white; border:none; }
 
         table { width:100%; border-collapse:collapse; font-size:24px; }
         th { text-align:right; color:var(--gold); padding:10px; border-bottom:4px solid var(--blue); }
         td { padding:12px; border-bottom:2px solid #1e293b; }
 
         .navbar { position:fixed; bottom:0; width:100%; height:110px; background: var(--card); display:flex; justify-content:space-around; align-items:center; border-top: 5px solid var(--blue); z-index: 1000; }
-        .nav-link { color:#94a3b8; text-align:center; font-size:26px; cursor:pointer; flex:1; font-weight:bold; }
-        .nav-link.active-link { color:var(--gold); border-top: 6px solid var(--gold); }
+        .nav-link { color:#94a3b8; text-align:center; font-size:26px; cursor:pointer; flex:1; font-weight:bold; padding: 10px 0; }
+        .active-link { color:var(--gold) !important; border-top: 6px solid var(--gold); }
 
         #intro-screen { position:fixed; inset:0; background:black; z-index:10000; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; }
         #results-screen { position:fixed; inset:0; background:var(--dark); z-index:9500; display:none; flex-direction:column; padding:30px; overflow-y:auto; }
@@ -39,90 +40,90 @@
 
 <div id="intro-screen">
     <h1 style="font-size:35px; color:var(--light-blue);">Powered by</h1>
-    <h1 style="font-size:65px; color:var(--gold);">MOHAMED LASSIRI</h1>
-    <button class="btn btn-gold" style="width:350px; margin-top:40px;" onclick="document.getElementById('intro-screen').style.display='none'">دخول اللعبة ⚽</button>
+    <h1 style="font-size:70px; color:var(--gold); text-shadow: 0 0 20px var(--gold);">MOHAMED LASSIRI</h1>
+    <button class="btn btn-gold" style="width:350px; margin-top:50px;" onclick="document.getElementById('intro-screen').style.display='none'">دخول الملاعب ⚽</button>
 </div>
 
 <div id="setup-screen" style="position:fixed; inset:0; background:var(--dark); z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-    <h1 style="font-size:45px; color:var(--gold);">اختر مسيرتك المهنية</h1>
+    <h1 style="font-size:40px; color:var(--gold);">اختر نوع المسيرة</h1>
     <div style="display:flex; gap:10px; width:90%;">
-        <button class="btn btn-gold" onclick="Game.setMode('manager')">👔 مدرب</button>
-        <button class="btn" style="background:white; color:black;" onclick="Game.setMode('player')">👤 لاعب</button>
+        <button id="btn-m" class="btn btn-gold" onclick="Game.setMode('manager')">👔 مدرب</button>
+        <button id="btn-p" class="btn" onclick="Game.setMode('player')">👤 لاعب</button>
     </div>
     <select id="team-select" style="width:90%; padding:20px; font-size:28px; border-radius:15px; margin-top:20px;"></select>
-    <button class="btn btn-gold" style="width:90%; margin-top:20px;" onclick="Game.confirmStart()">ابدأ الآن 🚀</button>
+    <button class="btn btn-gold" style="width:90%; margin-top:30px;" onclick="Game.confirmStart()">ابدأ الموسم 🚀</button>
 </div>
 
 <div class="header">
     <div class="stat-item"><span>النادي</span><b id="ui-club">-</b></div>
-    <div class="stat-item"><span>الميزانية/الراتب</span><b id="ui-money">-</b></div>
+    <div class="stat-item"><span>المال/الراتب</span><b id="ui-money">-</b></div>
     <div class="stat-item"><span>الثقة/الطاقة</span><b id="ui-energy">-</b></div>
 </div>
 
 <div class="main-content">
     <div id="sc-home" class="screen active">
         <div class="card">
-            <h3 id="ui-objective-title">🎯 هدف الإدارة</h3>
-            <p id="ui-objective" style="font-size:24px; color:var(--light-blue)">تحقيق لقب الدوري</p>
+            <h3>🎯 هدف الإدارة</h3>
+            <p id="ui-objective" style="font-size:28px; color:var(--light-blue)">تحقيق مركز متقدم</p>
         </div>
 
         <div id="manager-tools" style="display:none;">
             <div class="card">
-                <h3>🏦 الإدارة المالية</h3>
-                <button class="btn" onclick="Game.takeLoan()">💰 طلب قرض بنكي (50M)</button>
-                <button class="btn" onclick="Game.upgradeFacility('acad')">🏗️ تطوير الأكاديمية (10M)</button>
-                <button class="btn" onclick="Game.upgradeFacility('scout')">🔍 تعيين كشافة (5M)</button>
+                <h3>🏦 البنك والمرافق</h3>
+                <button class="btn" onclick="Game.takeLoan()">💰 طلب قرض (50M)</button>
+                <button class="btn" onclick="Game.upgrade('acad')">🏗️ الأكاديمية (10M)</button>
+                <button class="btn" onclick="Game.upgrade('scout')">🔍 كشافة (5M)</button>
             </div>
         </div>
 
         <div id="player-tools" style="display:none;">
             <div class="card">
-                <h3>🏋️ مركز التدريب والحياة</h3>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <button class="btn" onclick="Game.train('speed')">⚡ سرعة</button>
-                    <button class="btn" onclick="Game.train('shoot')">🎯 تسديد</button>
-                    <button class="btn btn-gold" onclick="Game.train('eat')">🍕 وجبة</button>
-                    <button class="btn" style="background:var(--green);" onclick="Game.train('rest')">💤 راحة</button>
+                <h3>🏋️ مركز التطوير</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="btn" onclick="Game.playerAction('speed')">⚡ سرعة</button>
+                    <button class="btn" onclick="Game.playerAction('shoot')">🎯 تسديد</button>
+                    <button class="btn btn-gold" onclick="Game.playerAction('eat')">🍕 وجبة</button>
+                    <button class="btn" style="background:var(--green)" onclick="Game.playerAction('rest')">💤 راحة</button>
                 </div>
-                <p style="font-size:22px;">أداء اللاعب (OVR): <b id="ui-ovr">70</b></p>
+                <p style="font-size:24px;">المستوى (OVR): <b id="ui-ovr">70</b></p>
             </div>
         </div>
 
-        <button class="btn btn-gold" style="height:100px; font-size:32px;" onclick="Game.playRound()">لعب الجولة القادمة ⚽</button>
+        <button class="btn btn-gold" style="height:110px; font-size:35px;" onclick="Game.playRound()">لعب المباراة القادمة ⚽</button>
     </div>
 
     <div id="sc-squad" class="screen">
         <div class="card">
-            <h3>📋 قائمة الفريق (4-3-3)</h3>
-            <div id="squad-list" style="font-size:26px; line-height:1.6;"></div>
+            <h3>📋 قائمة الفريق (11 لاعب)</h3>
+            <div id="squad-list" style="font-size:26px; line-height:1.8;"></div>
         </div>
     </div>
 
     <div id="sc-league" class="screen">
         <div class="card">
-            <h3>📊 ترتيب الدوري الإنجليزي</h3>
+            <h3>🏆 ترتيب الدوري (20 فريق)</h3>
             <table id="league-table"></table>
         </div>
     </div>
 </div>
 
 <div id="results-screen">
-    <h1 style="font-size:45px; color:var(--gold); text-align:center;">نتائج الجولة الكاملة</h1>
-    <div id="round-results-list" style="font-size:28px; line-height:2.2; text-align:center;"></div>
-    <button class="btn btn-gold" onclick="document.getElementById('results-screen').style.display='none'">العودة للمقر</button>
+    <h1 style="font-size:40px; color:var(--gold); text-align:center;">نتائج الجولة الكاملة</h1>
+    <div id="round-results-list" style="font-size:26px; line-height:2.2; text-align:center;"></div>
+    <button class="btn btn-gold" onclick="document.getElementById('results-screen').style.display='none'">متابعة الموسم</button>
 </div>
 
 <div class="navbar">
-    <div class="nav-link active-link" onclick="Game.nav('sc-home', this)">🏟️ النادي</div>
-    <div class="nav-link" onclick="Game.nav('sc-squad', this)">📋 الفريق</div>
+    <div class="nav-link active-link" onclick="Game.nav('sc-home', this)">🏠 النادي</div>
+    <div class="nav-link" onclick="Game.nav('sc-squad', this)">📋 التشكيلة</div>
     <div class="nav-link" onclick="Game.nav('sc-league', this)">🏆 الدوري</div>
 </div>
 
 <script>
 const Game = {
-    mode: '', club: '', money: 0, energy: 100, trust: 100, ovr: 70, week: 1,
+    mode: 'manager', club: '', money: 0, energy: 100, trust: 100, ovr: 70, week: 1,
     teamsData: {
-        "مان سيتي": ["إيدرسون", "دياز", "رودري", "دي بروين", "هالاند", "فودين", "سيلفا", "أكاكي", "جريليش", "ستونز", "والكر"],
+        "مان سيتي": ["إيدرسون", "دياز", "رودري", "دي بروين", "هالاند", "فودين", "سيلفا", "أكانجي", "جريليش", "ستونز", "والكر"],
         "ليفربول": ["أليسون", "فان دايك", "صلاح", "نونيز", "دياز", "ماك أليستر", "سوبوزلاي", "أرنولد", "كوناتي", "روبرتسون", "إندو"],
         "آرسنال": ["رايا", "ساليبا", "جابرييل", "ساكا", "أوديجارد", "رايس", "هافرتز", "مارتينلي", "وايت", "زينتشينكو", "جيسوس"],
         "مان يونايتد": ["أونانا", "مكتوميناي", "راشفورد", "برونو", "هويلوند", "جارناتشو", "كاسيميرو", "ماجواير", "دالوت", "ليتشا", "وان بيساكا"],
@@ -145,17 +146,22 @@ const Game = {
     },
     leagueStats: [],
 
-    setMode(m) {
-        this.mode = m;
+    init() {
         const select = document.getElementById('team-select');
         select.innerHTML = "";
         Object.keys(this.teamsData).forEach(t => select.innerHTML += `<option value="${t}">${t}</option>`);
+        this.leagueStats = Object.keys(this.teamsData).map(t => ({name: t, pts: 0}));
+    },
+
+    setMode(m) {
+        this.mode = m;
+        document.getElementById('btn-m').style.background = m === 'manager' ? 'var(--gold)' : 'var(--blue)';
+        document.getElementById('btn-p').style.background = m === 'player' ? 'var(--gold)' : 'var(--blue)';
     },
 
     confirmStart() {
         this.club = document.getElementById('team-select').value;
         this.money = (this.mode === 'manager') ? 80000000 : 2000;
-        this.leagueStats = Object.keys(this.teamsData).map(t => ({name: t, pts: 0}));
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById(this.mode + '-tools').style.display = 'block';
         this.updateUI();
@@ -165,43 +171,37 @@ const Game = {
 
     updateUI() {
         document.getElementById('ui-club').innerText = this.club;
-        document.getElementById('ui-money').innerText = this.money >= 1000000 ? (this.money/1000000).toFixed(1) + "M" : this.money + "$";
+        document.getElementById('ui-money').innerText = this.money >= 1000000 ? (this.money/1000000).toFixed(0) + "M" : this.money + "$";
         document.getElementById('ui-energy').innerText = (this.mode === 'player') ? this.energy + "%" : this.trust + "%";
         document.getElementById('ui-ovr').innerText = this.ovr;
-        if(this.trust <= 0) { alert("🚨 الإدارة قامت بإقالتك!"); location.reload(); }
+        if(this.trust <= 0) { alert("🚨 تم طردك من النادي!"); location.reload(); }
     },
 
-    train(type) {
-        if(type === 'eat') { this.money -= 300; this.energy = Math.min(100, this.energy + 40); }
+    playerAction(type) {
+        if(type === 'eat') { this.money -= 200; this.energy = Math.min(100, this.energy + 30); }
         else if(type === 'rest') { this.energy = 100; }
         else {
-            if(this.energy < 20) return alert("طاقة منخفضة!");
+            if(this.energy < 20) return alert("طاقتك لا تسمح!");
             this.money -= 100; this.energy -= 20; this.ovr += 0.5;
         }
         this.updateUI();
     },
 
-    takeLoan() { this.money += 50000000; alert("تم استلام القرض بنجاح!"); this.updateUI(); },
+    takeLoan() { this.money += 50000000; alert("تم سحب قرض 50 مليون"); this.updateUI(); },
 
-    upgradeFacility(type) { this.money -= (type === 'acad' ? 10000000 : 5000000); alert("تم التطوير بنجاح!"); this.updateUI(); },
+    upgrade(t) { this.money -= (t==='acad'?10000000:5000000); alert("تم التطوير!"); this.updateUI(); },
 
     playRound() {
-        if(this.mode === 'player' && this.energy < 30) return alert("أنت متعب جداً للمباراة!");
+        if(this.mode === 'player' && this.energy < 30) return alert("أنت مجهد جداً!");
+        let s1 = Math.floor(Math.random()*4), s2 = Math.floor(Math.random()*3);
+        let my = this.leagueStats.find(t => t.name === this.club);
         
-        // محاكاة مباراة اللاعب/المدرب
-        let scoreMe = Math.floor(Math.random() * 4);
-        let scoreOpp = Math.floor(Math.random() * 3);
-        let myTeam = this.leagueStats.find(t => t.name === this.club);
-        
-        if(scoreMe > scoreOpp) { myTeam.pts += 3; this.money += (this.mode === 'player' ? 1000 : 5000000); this.trust = Math.min(100, this.trust + 5); }
-        else if(scoreMe < scoreOpp) { this.trust -= 15; if(Math.random() > 0.8) { alert("🚑 إصابة قوية في الفريق!"); this.ovr -= 2; } }
-        else { myTeam.pts += 1; }
+        if(s1 > s2) { my.pts += 3; this.money += (this.mode==='player'?1000:5000000); this.trust = Math.min(100, this.trust+5); }
+        else if(s1 < s2) { this.trust -= 10; if(Math.random()>0.8) { alert("🚨 إصابة!"); this.ovr -= 1; } }
+        else { my.pts += 1; }
 
         if(this.mode === 'player') this.energy -= 40;
-        this.week++;
-        
-        // عرض النتائج الكاملة
-        this.showAllResults(scoreMe, scoreOpp);
+        this.showAllResults(s1, s2);
         this.renderTable();
         this.updateUI();
     },
@@ -210,30 +210,28 @@ const Game = {
         const screen = document.getElementById('results-screen');
         const list = document.getElementById('round-results-list');
         screen.style.display = 'flex';
-        list.innerHTML = `⭐ <b>مباراتك: ${this.club} ${myS} - ${oppS} الخصم</b><br><hr>`;
-        
+        list.innerHTML = `⭐ <b>${this.club} ${myS} - ${oppS} الخصم</b><br><hr>`;
         this.leagueStats.forEach(t => {
             if(t.name !== this.club) {
-                let s1 = Math.floor(Math.random()*3);
-                let s2 = Math.floor(Math.random()*3);
-                if(s1 > s2) t.pts += 3; else if(s1 === s2) t.pts += 1;
-                list.innerHTML += `🔹 ${t.name} ${s1} - ${s2} منافسه <br>`;
+                let r1 = Math.floor(Math.random()*3), r2 = Math.floor(Math.random()*3);
+                if(r1 > r2) t.pts += 3; else if(r1 === r2) t.pts += 1;
+                list.innerHTML += `🔹 ${t.name} ${r1} - ${r2} الخصم <br>`;
             }
         });
     },
 
     renderSquad() {
         const players = this.teamsData[this.club];
-        let html = "<ul>";
-        players.forEach(p => html += `<li>🏃 ${p}</li>`);
-        document.getElementById('squad-list').innerHTML = html + "</ul>";
+        let h = "<ul>";
+        players.forEach(p => h += `<li>🏃 ${p}</li>`);
+        document.getElementById('squad-list').innerHTML = h + "</ul>";
     },
 
     renderTable() {
         let sorted = [...this.leagueStats].sort((a,b) => b.pts - a.pts);
-        let html = "<tr><th>#</th><th>الفريق</th><th>نقطة</th></tr>";
-        sorted.forEach((t, i) => html += `<tr style="${t.name === this.club ? 'color:var(--gold)' : ''}"><td>${i+1}</td><td>${t.name}</td><td>${t.pts}</td></tr>`);
-        document.getElementById('league-table').innerHTML = html;
+        let h = "<tr><th>#</th><th>الفريق</th><th>PTS</th></tr>";
+        sorted.forEach((t, i) => h += `<tr style="${t.name===this.club?'color:var(--gold)':''}"><td>${i+1}</td><td>${t.name}</td><td>${t.pts}</td></tr>`);
+        document.getElementById('league-table').innerHTML = h;
     },
 
     nav(id, el) {
