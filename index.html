@@ -3,246 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LASSIRI PRO 2026 - Mohamed Lassiri</title>
+    <title>LASSIRI MASTER 2026</title>
     <style>
-        :root { --gold: #f1c40f; --dark: #000408; --blue: #1e40af; --light-blue: #60a5fa; --card: #0f172a; --text: #ffffff; --green: #22c55e; --red: #ef4444; }
-        body { margin:0; background:var(--dark); color:var(--text); font-family: 'Arial Black', sans-serif; font-weight: 900; overflow:hidden; }
+        :root { --gold: #f1c40f; --dark: #000408; --blue: #1e40af; --light: #60a5fa; --card: #0f172a; --text: #ffffff; --green: #22c55e; --red: #ef4444; }
+        body { margin:0; background:var(--dark); color:var(--text); font-family: 'Segoe UI', sans-serif; font-weight: 900; overflow:hidden; }
         
-        /* الهيدر المحسن */
-        .header { background: var(--blue); padding:10px; border-bottom:5px solid var(--gold); display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center; }
-        .stat-item { background: rgba(0,0,0,0.6); padding: 8px; border-radius: 12px; border: 2px solid var(--gold); }
-        .stat-item span { font-size:16px; color:#cbd5e1; display:block; }
-        .stat-item b { font-size:22px; color:var(--gold); }
+        .overlay { position:fixed; inset:0; background:var(--dark); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; }
+        input, select { width:90%; padding:15px; font-size:18px; margin:8px 0; border-radius:12px; border:3px solid var(--blue); background:#1e293b; color:white; }
 
-        .main-content { height:calc(100vh - 210px); overflow-y:auto; padding:20px; padding-bottom:120px; }
+        .header { background: var(--blue); padding:10px; border-bottom:4px solid var(--gold); display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; text-align:center; }
+        .stat-item { background: rgba(0,0,0,0.6); padding: 5px; border-radius: 10px; border: 2px solid var(--gold); }
+        .stat-item span { font-size:11px; color:#cbd5e1; display:block; }
+        .stat-item b { font-size:16px; color:var(--gold); }
+
+        #match-screen, #offer-screen, #recap-screen { position:fixed; inset:0; z-index:9000; display:none; flex-direction:column; padding:20px; text-align:center; }
+        #match-screen { background:radial-gradient(circle, #064e3b, #022c22); }
+        #offer-screen, #recap-screen { background: rgba(0,0,0,0.95); justify-content: center; z-index: 10001; }
+
+        .scoreboard { background:rgba(0,0,0,0.9); padding:15px; border-radius:20px; border:3px solid var(--gold); display:flex; justify-content:space-around; align-items:center; font-size:18px; }
+        #live-events { flex:1; overflow-y:auto; margin-top:15px; background:rgba(0,0,0,0.4); border-radius:15px; padding:15px; font-size:18px; text-align:right; }
+
+        .main-content { height:calc(100vh - 200px); overflow-y:auto; padding:15px; padding-bottom:110px; }
         .screen { display:none; }
         .active { display:block !important; }
 
-        .card { background: var(--card); border-radius:25px; padding:25px; margin-bottom:20px; border: 4px solid var(--light-blue); }
-        .card h3 { margin:0 0 15px 0; color:var(--gold); font-size:32px; border-bottom:3px solid var(--blue); }
-
-        .btn { background:var(--blue); color:white; border:3px solid white; padding:18px; border-radius:15px; cursor:pointer; font-weight:bold; width:100%; margin:8px 0; font-size:26px; }
+        .card { background: var(--card); border-radius:18px; padding:18px; margin-bottom:15px; border: 3px solid var(--light); position: relative; }
+        .btn { background:var(--blue); color:white; border:3px solid white; padding:14px; border-radius:12px; cursor:pointer; font-weight:bold; width:100%; margin:5px 0; font-size:20px; }
         .btn-gold { background:var(--gold); color:black; border:none; }
 
-        table { width:100%; border-collapse:collapse; font-size:24px; }
-        th { text-align:right; color:var(--gold); padding:10px; border-bottom:4px solid var(--blue); }
-        td { padding:12px; border-bottom:2px solid #1e293b; }
+        .player-card { display: flex; align-items: center; gap: 15px; background: #1e293b; padding: 10px; border-radius: 15px; border: 2px solid var(--gold); margin-bottom: 10px; }
+        .player-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold); object-fit: cover; background: #000; }
 
-        .navbar { position:fixed; bottom:0; width:100%; height:110px; background: var(--card); display:flex; justify-content:space-around; align-items:center; border-top: 5px solid var(--blue); z-index: 1000; }
-        .nav-link { color:#94a3b8; text-align:center; font-size:26px; cursor:pointer; flex:1; font-weight:bold; padding: 10px 0; }
-        .active-link { color:var(--gold) !important; border-top: 6px solid var(--gold); }
+        .navbar { position:fixed; bottom:0; width:100%; height:90px; background: var(--card); display:flex; justify-content:space-around; align-items:center; border-top: 4px solid var(--blue); z-index: 1000; }
+        .nav-link { color:#94a3b8; font-size:14px; cursor:pointer; font-weight:bold; }
+        .active-link { color:var(--gold) !important; border-top: 4px solid var(--gold); }
 
-        #intro-screen { position:fixed; inset:0; background:black; z-index:10000; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; }
-        #results-screen { position:fixed; inset:0; background:var(--dark); z-index:9500; display:none; flex-direction:column; padding:30px; overflow-y:auto; }
+        table { width:100%; border-collapse:collapse; font-size:14px; }
+        th { color:var(--gold); border-bottom:2px solid var(--blue); padding:8px; }
+        td { padding:8px; border-bottom:1px solid #1e293b; text-align:center; }
+        .recap-item { background: #1e293b; margin: 5px 0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; border-left: 5px solid var(--gold); }
     </style>
 </head>
 <body>
 
-<div id="intro-screen">
-    <h1 style="font-size:35px; color:var(--light-blue);">Powered by</h1>
-    <h1 style="font-size:70px; color:var(--gold); text-shadow: 0 0 20px var(--gold);">MOHAMED LASSIRI</h1>
-    <button class="btn btn-gold" style="width:350px; margin-top:50px;" onclick="document.getElementById('intro-screen').style.display='none'">دخول الملاعب ⚽</button>
+<div id="offer-screen">
+    <div class="card" style="border-color:var(--gold);">
+        <h2 style="color:var(--gold)">🗞️ عرض احتراف رسمي!</h2>
+        <p id="offer-text" style="font-size:20px;"></p>
+        <button class="btn btn-gold" onclick="Game.acceptOffer()">✅ قبول العرض</button>
+        <button class="btn" style="background:var(--red)" onclick="Game.rejectOffer()">❌ رفض والبقاء</button>
+    </div>
 </div>
 
-<div id="setup-screen" style="position:fixed; inset:0; background:var(--dark); z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
-    <h1 style="font-size:40px; color:var(--gold);">اختر نوع المسيرة</h1>
-    <div style="display:flex; gap:10px; width:90%;">
-        <button id="btn-m" class="btn btn-gold" onclick="Game.setMode('manager')">👔 مدرب</button>
-        <button id="btn-p" class="btn" onclick="Game.setMode('player')">👤 لاعب</button>
+<div id="recap-screen">
+    <div class="card" style="border-color:var(--green);">
+        <h2 style="color:var(--gold)">🏁 نتائج الجولة</h2>
+        <div id="recap-list"></div>
+        <button class="btn btn-gold" onclick="Game.closeRecap()">متابعة للمقر 🏠</button>
     </div>
-    <select id="team-select" style="width:90%; padding:20px; font-size:28px; border-radius:15px; margin-top:20px;"></select>
-    <button class="btn btn-gold" style="width:90%; margin-top:30px;" onclick="Game.confirmStart()">ابدأ الموسم 🚀</button>
+</div>
+
+<div id="intro-screen" class="overlay">
+    <h1 style="color:var(--gold); font-size:40px;">LASSIRI 2026</h1>
+    <button class="btn btn-gold" style="width:250px;" onclick="Game.showSetup()">دخول اللعبة 🏟️</button>
+</div>
+
+<div id="setup-screen" class="overlay" style="display:none;">
+    <h2 style="color:var(--gold)">إعداد المسيرة</h2>
+    <select id="select-mode">
+        <option value="player">👤 طور اللاعب</option>
+        <option value="manager">👔 طور المدرب</option>
+    </select>
+    <input type="text" id="user-name" placeholder="أدخل اسمك">
+    <select id="select-league" onchange="Game.loadTeams()">
+        <option value="">اختر الدوري</option>
+        <option value="ENG">🏴󠁧󠁢󠁥لنزي</option>
+        <option value="ESP">🇪🇸 الإسباني</option>
+        <option value="GER">🇩🇪 الألماني</option>
+        <option value="ITA">🇮🇹 الإيطالي</option>
+        <option value="FRA">🇫🇷 الفرنسي</option>
+    </select>
+    <select id="select-team"><option value="">اختر الفريق</option></select>
+    <button class="btn btn-gold" onclick="Game.start()">بدء الموسم ✅</button>
+</div>
+
+<div id="match-screen">
+    <div class="scoreboard">
+        <span id="m-home" style="color:var(--gold)">-</span> 
+        <span id="m-score" style="font-size:30px; margin:0 10px;">0 - 0</span> 
+        <span id="m-away">-</span>
+        <span id="m-timer" style="background:red; padding:4px 8px; border-radius:6px; font-size:14px;">0'</span>
+    </div>
+    <div id="live-events" style="margin-top:10px;"></div>
+    <button id="close-match" class="btn btn-gold" style="display:none;" onclick="Game.showRecap()">النتائج النهائية</button>
 </div>
 
 <div class="header">
-    <div class="stat-item"><span>النادي</span><b id="ui-club">-</b></div>
-    <div class="stat-item"><span>المال/الراتب</span><b id="ui-money">-</b></div>
-    <div class="stat-item"><span>الثقة/الطاقة</span><b id="ui-energy">-</b></div>
+    <div class="stat-item"><span>الهوية</span><b id="ui-id">-</b></div>
+    <div class="stat-item"><span>الميزانية</span><b id="ui-money">-</b></div>
+    <div class="stat-item"><span>الطاقة</span><b id="ui-trust">-</b></div>
 </div>
 
 <div class="main-content">
     <div id="sc-home" class="screen active">
         <div class="card">
-            <h3>🎯 هدف الإدارة</h3>
-            <p id="ui-objective" style="font-size:28px; color:var(--light-blue)">تحقيق مركز متقدم</p>
+            <h3>🏠 النادي الحالي</h3>
+            <p id="ui-status-desc"></p>
+            <p style="color:var(--gold); font-size:18px;">الخصم: <span id="ui-opponent" style="color:white;">-</span></p>
+            <button class="btn btn-gold" onclick="Game.playMatch()">لعب المباراة ⚽</button>
         </div>
-
-        <div id="manager-tools" style="display:none;">
-            <div class="card">
-                <h3>🏦 البنك والمرافق</h3>
-                <button class="btn" onclick="Game.takeLoan()">💰 طلب قرض (50M)</button>
-                <button class="btn" onclick="Game.upgrade('acad')">🏗️ الأكاديمية (10M)</button>
-                <button class="btn" onclick="Game.upgrade('scout')">🔍 كشافة (5M)</button>
-            </div>
+        <div id="mgr-tools" style="display:none;" class="card">
+            <button class="btn" onclick="Game.money += 100; Game.updateUI();">💰 طلب دعم 100M</button>
         </div>
-
-        <div id="player-tools" style="display:none;">
-            <div class="card">
-                <h3>🏋️ مركز التطوير</h3>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <button class="btn" onclick="Game.playerAction('speed')">⚡ سرعة</button>
-                    <button class="btn" onclick="Game.playerAction('shoot')">🎯 تسديد</button>
-                    <button class="btn btn-gold" onclick="Game.playerAction('eat')">🍕 وجبة</button>
-                    <button class="btn" style="background:var(--green)" onclick="Game.playerAction('rest')">💤 راحة</button>
-                </div>
-                <p style="font-size:24px;">المستوى (OVR): <b id="ui-ovr">70</b></p>
-            </div>
-        </div>
-
-        <button class="btn btn-gold" style="height:110px; font-size:35px;" onclick="Game.playRound()">لعب المباراة القادمة ⚽</button>
     </div>
 
-    <div id="sc-squad" class="screen">
+    <div id="sc-training" class="screen">
         <div class="card">
-            <h3>📋 قائمة الفريق (11 لاعب)</h3>
-            <div id="squad-list" style="font-size:26px; line-height:1.8;"></div>
+            <h3>🏋️ التدريب</h3>
+            <p>مستواك OVR: <b id="ui-ovr" style="color:var(--gold)">70</b></p>
+            <button class="btn" onclick="Game.train(30, 0.5)">💪 تدريب شاق (+0.5)</button>
+            <button class="btn" style="background:var(--green)" onclick="Game.eat()">🍕 وجبة طاقة (100$)</button>
         </div>
+    </div>
+
+    <div id="sc-market" class="screen">
+        <div class="card"><h3>🛒 سوق الانتقالات</h3><div id="market-list"></div></div>
     </div>
 
     <div id="sc-league" class="screen">
-        <div class="card">
-            <h3>🏆 ترتيب الدوري (20 فريق)</h3>
-            <table id="league-table"></table>
-        </div>
+        <div class="card"><h3>🏆 الترتيب</h3><table id="league-table"></table></div>
     </div>
-</div>
-
-<div id="results-screen">
-    <h1 style="font-size:40px; color:var(--gold); text-align:center;">نتائج الجولة الكاملة</h1>
-    <div id="round-results-list" style="font-size:26px; line-height:2.2; text-align:center;"></div>
-    <button class="btn btn-gold" onclick="document.getElementById('results-screen').style.display='none'">متابعة الموسم</button>
 </div>
 
 <div class="navbar">
     <div class="nav-link active-link" onclick="Game.nav('sc-home', this)">🏠 النادي</div>
-    <div class="nav-link" onclick="Game.nav('sc-squad', this)">📋 التشكيلة</div>
+    <div id="nav-train" class="nav-link" onclick="Game.nav('sc-training', this)">🏋️ تدريب</div>
+    <div class="nav-link" onclick="Game.nav('sc-market', this)">🛒 السوق</div>
     <div class="nav-link" onclick="Game.nav('sc-league', this)">🏆 الدوري</div>
 </div>
 
 <script>
 const Game = {
-    mode: 'manager', club: '', money: 0, energy: 100, trust: 100, ovr: 70, week: 1,
-    teamsData: {
-        "مان سيتي": ["إيدرسون", "دياز", "رودري", "دي بروين", "هالاند", "فودين", "سيلفا", "أكانجي", "جريليش", "ستونز", "والكر"],
-        "ليفربول": ["أليسون", "فان دايك", "صلاح", "نونيز", "دياز", "ماك أليستر", "سوبوزلاي", "أرنولد", "كوناتي", "روبرتسون", "إندو"],
-        "آرسنال": ["رايا", "ساليبا", "جابرييل", "ساكا", "أوديجارد", "رايس", "هافرتز", "مارتينلي", "وايت", "زينتشينكو", "جيسوس"],
-        "مان يونايتد": ["أونانا", "مكتوميناي", "راشفورد", "برونو", "هويلوند", "جارناتشو", "كاسيميرو", "ماجواير", "دالوت", "ليتشا", "وان بيساكا"],
-        "تشيلسي": ["سانشيز", "سيلفا", "إنزو", "كايسيدو", "بالمر", "سترلينج", "جاكسون", "جالاغير", "جيمس", "تشيلويل", "كول ويل"],
-        "توتنهام": ["فيكاريو", "روميرو", "سون", "ماديسون", "كولوسيفسكي", "ريتشارليسون", "بيسوما", "بورو", "فان دي فين", "أودوجي", "سار"],
-        "نيوكاسل": ["بوب", "تريبيير", "شار", "بوتمان", "بيرن", "جويماريش", "تونالي", "جولينتون", "إيساك", "ألميرون", "جوردون"],
-        "أستون فيلا": ["مارتينيز", "كونسا", "كارلوس", "توريس", "دينيه", "دوجلاس لويز", "كامارا", "مكجين", "بايلي", "واتكينز", "ديابي"],
-        "وست هام": ["أريولا", "زوما", "أجيرد", "كوفال", "إيمرسون", "ألفاريز", "سوتشيك", "وارد براوس", "قدوس", "بوين", "أنطونيو"],
-        "برايتون": ["ستيل", "دانك", "فان هيك", "فيلتمان", "إستوبينان", "جروس", "جيلمور", "ميتوما", "أدينجرا", "بيدرو", "فيرجسون"],
-        "وولفز": ["سا", "كيلمان", "داوسون", "توتي", "سيميدو", "أيت نوري", "ليمينا", "جوميز", "نيتو", "كونيا", "هوانج"],
-        "فولهام": ["لينو", "أديرابيو", "باسي", "كاستاني", "روبنسون", "بالينيا", "ريد", "بيريرا", "ويلسون", "ويليان", "مونييز"],
-        "بورنموث": ["نيتو", "زبارني", "سينيسي", "سميث", "كيركيز", "كريستي", "كوك", "سولانكي", "كلايفرت", "سيمينيو", "تافيرنير"],
-        "كريستال بالاس": ["هندرسون", "أندرسن", "غويهي", "وارد", "ميتشل", "ليرما", "وارتون", "إيزي", "أوليس", "أيو", "ماتيتا"],
-        "برينتفورد": ["فليكن", "بينوك", "كولينز", "آير", "رويرسليف", "نورجارد", "يانيلت", "ينسين", "مبيمو", "توني", "ويسا"],
-        "إيفرتون": ["بفورد", "تاركوفسكي", "برانثويت", "باترسون", "ميكولينكو", "جاي", "أونانا", "دوكوري", "هاريسون", "ماكنيل", "كالفيرت"],
-        "نوتينغهام": ["سيلس", "موريلو", "بولي", "ويليامز", "أينا", "دانييلو", "يتس", "جيبس وايت", "إيلانجا", "أودوي", "أوونيي"],
-        "لوتون": ["كامينسكي", "منجي", "أوشو", "بيل", "داوتي", "باركلي", "لوكونجا", "كلارك", "أوجبيني", "موريس", "أديبيو"],
-        "بيرنلي": ["ترافورد", "أوشي", "إستيف", "أسينيون", "تايلور", "بيرج", "كولين", "براونهيل", "أودوبيرت", "فوستر", "أمدوني"],
-        "شيفيلد": ["غروبيتش", "أحمدودجيتش", "تروستي", "بوغل", "لاريوسو", "سوزا", "هامر", "بروستر", "آرتشر", "ماكبيرني", "بريريتون"]
+    mode: '', name: '', club: '', money: 0, trust: 80, energy: 100, ovr: 70, week: 1, 
+    opponent: '', currentOffer: null, leagueData: [],
+    allTeams: {
+        ENG: ["مانشستر سيتي", "ليفربول", "آرسنال", "تشيلسي", "توتنهام", "مان يونايتد", "نيوكاسل", "أستون فيلا", "برايتون", "وست هام", "وولفز", "فولهام", "إيفرتون", "برينتفورد", "بورنموث", "كريستال بالاس", "نوتينغهام", "لوتون", "بيرنلي", "شيفيلد"],
+        ESP: ["ريال مدريد", "برشلونة", "أتلتيكو مدريد", "جيرونا", "بيلباو", "سوسيداد", "بيتيس", "فياريال", "فالنسيا", "إشبيلية", "أوساسونا", "خيتافي", "لاس بالماس", "ألافيس", "مايوركا", "رايو", "سيلتا", "قادش", "غرناطة", "ألميريا"],
+        GER: ["بايرن ميونخ", "ليفركوزن", "دورتموند", "لايبزيغ", "شتوتغارت", "فرانكفورت", "هوفنهايم", "فرايبورغ", "بريمن", "أوجسبورج", "فولفسبورج", "غلادباخ", "يونيون برلين", "بوخوم", "ماينز", "كولن", "دارمشتات", "هايدنهايم", "شالكه", "هامبورغ"],
+        ITA: ["إنتر", "ميلان", "يوفنتوس", "روما", "أتالانتا", "لاتسيو", "نابولي", "فيورنتينا", "تورينو", "مونزا", "جنوى", "ليتشي", "أودينيزي", "فيرونا", "إمبولي", "ساسولو", "فروسينوني", "كالياري", "ساليرنيتانا", "باليرمو"],
+        FRA: ["باريس", "موناكو", "ليل", "نيس", "لانس", "ليون", "مارسيليا", "رين", "ريمس", "تولوز", "مونبلييه", "ستراسبورغ", "لوهافر", "نانت", "ميتز", "لوريان", "كليرمونت", "بوردو", "سانت إيتيان"]
     },
-    leagueStats: [],
+    playersDB: [
+        {n: "هالاند", p: 200, img: "https://img.a.transfermarkt.technology/portrait/header/502023-1665067742.jpg?lm=1"},
+        {n: "مبابي", p: 180, img: "https://img.a.transfermarkt.technology/portrait/header/342229-1632681436.jpg?lm=1"},
+        {n: "صلاح", p: 150, img: "https://img.a.transfermarkt.technology/portrait/header/148455-1546611451.jpg?lm=1"}
+    ],
 
-    init() {
-        const select = document.getElementById('team-select');
-        select.innerHTML = "";
-        Object.keys(this.teamsData).forEach(t => select.innerHTML += `<option value="${t}">${t}</option>`);
-        this.leagueStats = Object.keys(this.teamsData).map(t => ({name: t, pts: 0}));
+    showSetup() { document.getElementById('intro-screen').style.display='none'; document.getElementById('setup-screen').style.display='flex'; },
+    
+    loadTeams() {
+        const lKey = document.getElementById('select-league').value;
+        const s = document.getElementById('select-team');
+        s.innerHTML = '<option value="">اختر الفريق</option>';
+        if(lKey && this.allTeams[lKey]) {
+            this.allTeams[lKey].forEach(t => { s.innerHTML += `<option value="${t}">${t}</option>`; });
+        }
     },
 
-    setMode(m) {
-        this.mode = m;
-        document.getElementById('btn-m').style.background = m === 'manager' ? 'var(--gold)' : 'var(--blue)';
-        document.getElementById('btn-p').style.background = m === 'player' ? 'var(--gold)' : 'var(--blue)';
-    },
+    start() {
+        this.mode = document.getElementById('select-mode').value;
+        this.name = document.getElementById('user-name').value || "Lassiri";
+        this.club = document.getElementById('select-team').value;
+        const lKey = document.getElementById('select-league').value;
+        if(!this.club || !lKey) return alert("الرجاء اختيار الدوري والفريق!");
 
-    confirmStart() {
-        this.club = document.getElementById('team-select').value;
-        this.money = (this.mode === 'manager') ? 80000000 : 2000;
+        this.money = (this.mode === 'manager') ? 300 : 500;
+        this.leagueData = this.allTeams[lKey].map(t => ({name: t, pts: 0}));
+        
         document.getElementById('setup-screen').style.display = 'none';
-        document.getElementById(this.mode + '-tools').style.display = 'block';
+        document.getElementById('mgr-tools').style.display = (this.mode === 'manager') ? 'block' : 'none';
+        document.getElementById('nav-train').style.display = (this.mode === 'player') ? 'flex' : 'none';
+        
+        this.pickOpponent();
         this.updateUI();
-        this.renderTable();
-        this.renderSquad();
+        this.renderLeague();
+        this.renderMarket();
+    },
+
+    pickOpponent() {
+        let others = this.leagueData.filter(t => t.name !== this.club);
+        this.opponent = others[Math.floor(Math.random() * others.length)].name;
+        document.getElementById('ui-opponent').innerText = this.opponent;
     },
 
     updateUI() {
-        document.getElementById('ui-club').innerText = this.club;
-        document.getElementById('ui-money').innerText = this.money >= 1000000 ? (this.money/1000000).toFixed(0) + "M" : this.money + "$";
-        document.getElementById('ui-energy').innerText = (this.mode === 'player') ? this.energy + "%" : this.trust + "%";
-        document.getElementById('ui-ovr').innerText = this.ovr;
-        if(this.trust <= 0) { alert("🚨 تم طردك من النادي!"); location.reload(); }
+        document.getElementById('ui-id').innerText = (this.mode === 'player') ? this.name : this.club;
+        document.getElementById('ui-money').innerText = this.money + (this.mode === 'manager' ? "M" : "$");
+        document.getElementById('ui-trust').innerText = (this.mode === 'player') ? this.energy + "%" : this.trust + "%";
+        document.getElementById('ui-ovr').innerText = this.ovr.toFixed(1);
+        document.getElementById('ui-status-desc').innerText = "الجولة " + this.week + " | " + this.club;
     },
 
-    playerAction(type) {
-        if(type === 'eat') { this.money -= 200; this.energy = Math.min(100, this.energy + 30); }
-        else if(type === 'rest') { this.energy = 100; }
-        else {
-            if(this.energy < 20) return alert("طاقتك لا تسمح!");
-            this.money -= 100; this.energy -= 20; this.ovr += 0.5;
-        }
-        this.updateUI();
-    },
-
-    takeLoan() { this.money += 50000000; alert("تم سحب قرض 50 مليون"); this.updateUI(); },
-
-    upgrade(t) { this.money -= (t==='acad'?10000000:5000000); alert("تم التطوير!"); this.updateUI(); },
-
-    playRound() {
-        if(this.mode === 'player' && this.energy < 30) return alert("أنت مجهد جداً!");
-        let s1 = Math.floor(Math.random()*4), s2 = Math.floor(Math.random()*3);
-        let my = this.leagueStats.find(t => t.name === this.club);
-        
-        if(s1 > s2) { my.pts += 3; this.money += (this.mode==='player'?1000:5000000); this.trust = Math.min(100, this.trust+5); }
-        else if(s1 < s2) { this.trust -= 10; if(Math.random()>0.8) { alert("🚨 إصابة!"); this.ovr -= 1; } }
-        else { my.pts += 1; }
-
-        if(this.mode === 'player') this.energy -= 40;
-        this.showAllResults(s1, s2);
-        this.renderTable();
-        this.updateUI();
-    },
-
-    showAllResults(myS, oppS) {
-        const screen = document.getElementById('results-screen');
-        const list = document.getElementById('round-results-list');
-        screen.style.display = 'flex';
-        list.innerHTML = `⭐ <b>${this.club} ${myS} - ${oppS} الخصم</b><br><hr>`;
-        this.leagueStats.forEach(t => {
-            if(t.name !== this.club) {
-                let r1 = Math.floor(Math.random()*3), r2 = Math.floor(Math.random()*3);
-                if(r1 > r2) t.pts += 3; else if(r1 === r2) t.pts += 1;
-                list.innerHTML += `🔹 ${t.name} ${r1} - ${r2} الخصم <br>`;
+    playMatch() {
+        document.getElementById('match-screen').style.display = 'flex';
+        document.getElementById('m-home').innerText = this.club;
+        document.getElementById('m-away').innerText = this.opponent;
+        let min = 0, h = 0, a = 0;
+        let loop = setInterval(() => {
+            min++;
+            document.getElementById('m-timer').innerText = min + "'";
+            if(Math.random() > 0.95) {
+                if(Math.random() > 0.55) h++; else a++;
+                document.getElementById('m-score').innerText = h + " - " + a;
             }
-        });
+            if(min >= 90) { 
+                clearInterval(loop); 
+                document.getElementById('close-match').style.display = 'block'; 
+                this.finalize(h, a); 
+            }
+        }, 30);
     },
 
-    renderSquad() {
-        const players = this.teamsData[this.club];
-        let h = "<ul>";
-        players.forEach(p => h += `<li>🏃 ${p}</li>`);
-        document.getElementById('squad-list').innerHTML = h + "</ul>";
+    finalize(h, a) {
+        let myTeam = this.leagueData.find(t => t.name === this.club);
+        if(h > a) { myTeam.pts += 3; this.money += (this.mode==='manager'?15:200); }
+        else if(h === a) { myTeam.pts += 1; }
+        this.energy = Math.max(0, this.energy - 35);
     },
 
-    renderTable() {
-        let sorted = [...this.leagueStats].sort((a,b) => b.pts - a.pts);
+    showRecap() {
+        let html = "";
+        let others = this.leagueData.filter(t => t.name !== this.club && t.name !== this.opponent);
+        for(let i=0; i<4; i++) {
+            let t1 = others[i].name, t2 = others[others.length-1-i].name;
+            let s1 = Math.floor(Math.random()*3), s2 = Math.floor(Math.random()*3);
+            this.leagueData.find(t => t.name === t1).pts += (s1 > s2 ? 3 : (s1===s2?1:0));
+            this.leagueData.find(t => t.name === t2).pts += (s2 > s1 ? 3 : (s1===s2?1:0));
+            html += `<div class="recap-item"><span>${t1}</span> <b>${s1} - ${s2}</b> <span>${t2}</span></div>`;
+        }
+        document.getElementById('recap-list').innerHTML = html;
+        document.getElementById('recap-screen').style.display = 'flex';
+        document.getElementById('match-screen').style.display = 'none';
+    },
+
+    closeRecap() {
+        this.week++;
+        document.getElementById('recap-screen').style.display = 'none';
+        document.getElementById('close-match').style.display = 'none';
+        document.getElementById('m-score').innerText = "0 - 0";
+        this.pickOpponent();
+        this.updateUI();
+        this.renderLeague();
+        this.checkOffers();
+    },
+
+    checkOffers() {
+        if(this.mode === 'player' && this.week % 6 === 0 && this.ovr > 78) {
+            const giants = ["ريال مدريد", "ليفربول", "بايرن ميونخ", "برشلونة"];
+            this.currentOffer = giants[Math.floor(Math.random() * giants.length)];
+            document.getElementById('offer-text').innerText = `وصلك عرض احتراف من نادى ${this.currentOffer}! هل تقبل؟`;
+            document.getElementById('offer-screen').style.display = 'flex';
+        }
+    },
+
+    acceptOffer() { this.club = this.currentOffer; document.getElementById('offer-screen').style.display = 'none'; this.updateUI(); },
+    rejectOffer() { document.getElementById('offer-screen').style.display = 'none'; },
+
+    renderMarket() {
+        let html = "";
+        if(this.mode === 'manager') {
+            this.playersDB.forEach((p, i) => {
+                html += `<div class="player-card"><img src="${p.img}" class="player-img"><div><b>${p.n}</b><br>${p.p}M</div><button class="btn-gold" onclick="Game.buyP(${i})">شراء</button></div>`;
+            });
+        }
+        document.getElementById('market-list').innerHTML = html || "<p>تألق في المباريات لتصل للعالمية!</p>";
+    },
+
+    buyP(i) { if(this.money >= this.playersDB[i].p) { this.money -= this.playersDB[i].p; alert("تمت الصفقة!"); this.updateUI(); } },
+
+    renderLeague() {
+        let sorted = [...this.leagueData].sort((a,b) => b.pts - a.pts);
         let h = "<tr><th>#</th><th>الفريق</th><th>PTS</th></tr>";
         sorted.forEach((t, i) => h += `<tr style="${t.name===this.club?'color:var(--gold)':''}"><td>${i+1}</td><td>${t.name}</td><td>${t.pts}</td></tr>`);
         document.getElementById('league-table').innerHTML = h;
     },
 
     nav(id, el) {
-        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
+        document.querySelectorAll('.screen').forEach(s => s.style.display='none');
+        document.getElementById(id).style.display='block';
         document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active-link'));
         el.classList.add('active-link');
-    }
-};
+    },
 
-window.onload = () => Game.init();
+    train(c, g) { if(this.energy >= c) { this.energy -= c; this.ovr += g; this.updateUI(); } else alert("الطاقة منخفضة!"); },
+    eat() { if(this.money >= 100){ this.money -= 100; this.energy = 100; this.updateUI(); } }
+};
 </script>
 </body>
 </html>
